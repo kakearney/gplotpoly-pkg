@@ -39,7 +39,7 @@ function [xout, yout] = arrowpolygon(x, y, width, headwidth, headlength, plotfla
 % Check input
 %----------------------------
 
-error(nargchk(5,7,nargin));
+narginchk(5,7);
 
 if nargin == 5
     plotflag = false;
