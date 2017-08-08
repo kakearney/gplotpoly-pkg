@@ -265,6 +265,12 @@ end
 
 function [xout, yout] = polyboolfast(flag, x1, y1, x2, y2)
 
+mappath = fullfile(matlabroot, 'toolbox', 'map', 'map', 'private');
+Gpc = dir(fullfile(mappath, 'gpcmex*'));
+gpcmexpath = fullfile(mappath, Gpc.name);
+
+gpcmex = function_handle(gpcmexpath);
+
 if strcmp(flag, 'diff')
     op = '-';
 else
