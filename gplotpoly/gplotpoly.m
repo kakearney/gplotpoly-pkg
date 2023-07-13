@@ -63,6 +63,7 @@ Opt.nlim = minmax(nval);
 Opt.ecdata = adj(adj~=0);
 Opt.ncdata = nval;
 Opt.axis = gca;
+Opt.arrow = false;
 
 Opt = parsepv(Opt, varargin);
 
@@ -112,8 +113,13 @@ w(erel < Opt.elim(1)) = Opt.wlim(1);
 hwid = w*1.5; 
 hlen = w;
 
-[xa, ya] = cellfun(@(xl,yl,w,hw,hl) arrowpolygon(xl,yl,w,hw,hl,false,true), ...
-    xl, yl, num2cell(w), num2cell(hwid), num2cell(hlen), 'uni', 0);
+if Opt.arrow
+    [xa, ya] = cellfun(@(xl,yl,w,hw,hl) arrowpolygon(xl,yl,w,hw,hl,false,true), ...
+                       xl, yl, num2cell(w), num2cell(hwid), num2cell(hlen), 'uni', 0);
+else
+    [xa, ya, ca] = cellfun(@(xl,yl,w) line2poly(xl, yl, w), xl, yl, num2cell(w), 'uni', 0);
+end
+
 
 % len = cellfun(@length, xa);
 % npt = max(len);
@@ -137,7 +143,6 @@ r(nval < Opt.nlim(1)) = Opt.rlim(1);
 
 xn = bsxfun(@plus, cos(th) * r, xy(:,1)');
 yn = bsxfun(@plus, sin(th) * r, xy(:,2)');
-
 
 h.arrow = cellfun(@(x,y,c) patch(x,y,c, 'parent', Opt.axis), xa, ya, num2cell(Opt.ecdata));
 h.node = patch(xn, yn, Opt.ncdata, 'parent', Opt.axis);
