@@ -56,6 +56,8 @@ if ~isvector(nval)
 end
 nval = reshape(nval, 1, []);
 
+minmax = @(x) [min(x(:)) max(x(:))];
+
 Opt.edgetype = 'curve';
 Opt.edgecoord = [];
 Opt.edgecurve = 0.04;
