@@ -58,20 +58,21 @@ nval = reshape(nval, 1, []);
 
 minmax = @(x) [min(x(:)) max(x(:))];
 
-Opt.edgetype = 'curve';
-Opt.edgecoord = [];
-Opt.edgecurve = 0.04;
-Opt.wlim = [0.01 0.05];
-Opt.elim = minmax(adj(adj~=0));
-Opt.rlim = [0.01 0.05];
-Opt.nlim = minmax(nval);
-Opt.ecdata = adj(adj~=0);
-Opt.ncdata = nval;
-Opt.axis = gca;
-Opt.arrow = false;
-Opt.edgeval = [];
-
-Opt = parsepv(Opt, varargin);
+p = inputParser;
+p.addParameter('edgetype', 'curve');
+p.addParameter('edgecoord', []);
+p.addParameter('edgecurve', 0.04);
+p.addParameter('wlim', [0.01 0.05]);
+p.addParameter('elim', minmax(adj(adj~=0)));
+p.addParameter('rlim', [0.01 0.05]);
+p.addParameter('nlim', minmax(nval));
+p.addParameter('ecdata', adj(adj~=0));
+p.addParameter('ncdata', nval);
+p.addParameter('axis', gca);
+p.addParameter('arrow', false);
+p.addParameter('edgeval', []);
+p.parse(varargin{:});
+Opt = p.Results;
 
 if ~isvector(Opt.ncdata)
     error('ncdata must be vector');
