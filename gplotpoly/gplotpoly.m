@@ -26,6 +26,9 @@ function h = gplotpoly(adj, xy, nval, varargin)
 %
 %   edgecurve:  for 'curve' edge type, degree of curvature [0.04]
 %
+%   edgeval:    nnz x 1 array, values corresponding to non-zero adj values.
+%               Can be useful to use this if you require 0-width edges []
+%
 %   wlim:       arrow widths that correspond to minimum and maximum edge
 %               data values, in axis coordinates [0.01 0.05]
 %
@@ -53,19 +56,23 @@ if ~isvector(nval)
 end
 nval = reshape(nval, 1, []);
 
-Opt.edgetype = 'curve';
-Opt.edgecoord = [];
-Opt.edgecurve = 0.04;
-Opt.wlim = [0.01 0.05];
-Opt.elim = minmax(adj(adj~=0));
-Opt.rlim = [0.01 0.05];
-Opt.nlim = minmax(nval);
-Opt.ecdata = adj(adj~=0);
-Opt.ncdata = nval;
-Opt.axis = gca;
-Opt.arrow = false;
+minmax = @(x) [min(x(:)) max(x(:))];
 
-Opt = parsepv(Opt, varargin);
+p = inputParser;
+p.addParameter('edgetype', 'curve');
+p.addParameter('edgecoord', []);
+p.addParameter('edgecurve', 0.04);
+p.addParameter('wlim', [0.01 0.05]);
+p.addParameter('elim', minmax(adj(adj~=0)));
+p.addParameter('rlim', [0.01 0.05]);
+p.addParameter('nlim', minmax(nval));
+p.addParameter('ecdata', adj(adj~=0));
+p.addParameter('ncdata', nval);
+p.addParameter('axis', gca);
+p.addParameter('arrow', false);
+p.addParameter('edgeval', []);
+p.parse(varargin{:});
+Opt = p.Results;
 
 if ~isvector(Opt.ncdata)
     error('ncdata must be vector');
@@ -105,7 +112,11 @@ end
 
 % Arrow coordinates
 
-erel = adj(adj ~= 0);
+if isempty(Opt.edgeval)
+    erel = adj(adj ~= 0);
+else
+    erel = Opt.edgeval;
+end
 w = interp1(Opt.elim, Opt.wlim, erel);
 w(erel > Opt.elim(2)) = Opt.wlim(2);
 w(erel < Opt.elim(1)) = Opt.wlim(1);
